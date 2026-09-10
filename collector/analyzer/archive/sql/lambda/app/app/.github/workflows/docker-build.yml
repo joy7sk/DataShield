@@ -1,0 +1,27 @@
+name: DataShield Docker CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t datashield-app ./app
+
+      - name: Test Docker image
+        run: |
+          docker run -d --name datashield-app -p 8080:80 datashield-app
+          sleep 5
+          curl http://localhost:8080/health
